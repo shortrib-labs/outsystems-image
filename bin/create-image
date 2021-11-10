@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+packer build -only=vmware-iso.outsystems-image ${PROJECT_DIR}/packer/outsystems-image.pkr.hcl
