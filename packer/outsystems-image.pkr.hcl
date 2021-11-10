@@ -40,15 +40,27 @@ variable "vcenter_username" {
 }
 
 variable "vcenter_password" {
-  type    = string
+  type = string
 }
 
 variable "vcenter_server" {
-  type    = string
+  type = string
 }
 
 variable "vcenter_datacenter" {
-  type    = string
+  type = string
+}
+
+variable "vcenter_cluster" {
+  type = string
+}
+
+variable "vcenter_datastore" {
+  type = string
+}
+
+variable "vcenter_network" {
+  type = string
 }
 
 variable "winrm_password" {
@@ -62,51 +74,60 @@ variable "winrm_username" {
 }
 
 variable "output_directory" {
-  type    = string
+  type = string
 }
 
 variable "script_directory" {
-  type    = string
+  type = string
 }
 
-source "vmware-iso" "outsystems-image" {
-  boot_wait        = var.boot_wait
-  communicator     = "winrm"
-  disk_size        = var.disk_size
-  disk_type_id     = "0"
-  floppy_files     = ["${var.script_directory}/setup/autounattend.xml"]
-  guest_os_type    = "windows2019srv-64"
-  headless         = true
-  iso_checksum     = var.iso_checksum
-  iso_url          = var.iso_url
-  output_directory = var.output_directory
-  shutdown_command = "shutdown /s /t 5 /f /d p:4:1 /c \"Packer Shutdown\""
-  shutdown_timeout = "30m"
-  skip_compaction  = false
-  vm_name          = var.vm_name
-  vmx_data = {
-    memsize             = var.memsize
-    numvcpus            = var.numvcpus
-    "scsi0.virtualDev"  = "lsisas1068"
-    "virtualHW.version" = "14"
+source "vsphere-iso" "outsystems-image" {
+  vm_name    = var.vm_name
+  vm_version = "19"
+
+  iso_url      = var.iso_url
+  iso_checksum = var.iso_checksum
+
+  CPUs                 = var.numvcpus
+  RAM                  = var.memsize
+  disk_controller_type = ["pvscsi"]
+  storage {
+    disk_size             = var.disk_size
+    disk_thin_provisioned = true
+  }
+  network_adapters {
+    network      = var.vcenter_network
+    network_card = "vmxnet3"
   }
 
-  winrm_insecure   = true
-  winrm_password   = var.winrm_password
-  winrm_timeout    = "4h"
-  winrm_use_ssl    = true
-  winrm_username   = var.winrm_username
+  boot_wait        = var.boot_wait
+  floppy_files     = ["${var.script_directory}/setup/autounattend.xml"]
+  shutdown_command = "shutdown /s /t 5 /f /d p:4:1 /c \"Packer Shutdown\""
+  shutdown_timeout = "30m"
 
+  communicator   = "winrm"
+  winrm_username = var.winrm_username
+  winrm_password = var.winrm_password
+  winrm_timeout  = "4h"
+  winrm_use_ssl  = true
+  winrm_insecure = true
 
   vcenter_server      = var.vcenter_server
   username            = var.vcenter_username
   password            = var.vcenter_password
   datacenter          = var.vcenter_datacenter
+  cluster             = var.vcenter_cluster
+  datastore           = var.vcenter_datastore
   insecure_connection = true
+
+  convert_to_template = true
+  export {
+    output_directory = var.output_directory
+  }
 }
 
 build {
-  sources = ["source.vmware-iso.outsystems-image"]
+  sources = ["source.vsphere-iso.outsystems-image"]
 
   provisioner "powershell" {
     script = "${var.script_directory}/outsystems-test.ps1"
@@ -140,6 +161,6 @@ build {
   }
 
   post-processor "shell-local" {
-    inline = ["ovftool ${var.output_directory}/${var.vm_name}.vmx ${var.output_directory}/${var.vm_name}.ova" ]
+    inline = ["ovftool ${var.output_directory}/${var.vm_name}.vmx ${var.output_directory}/${var.vm_name}.ova"]
   }
 }
