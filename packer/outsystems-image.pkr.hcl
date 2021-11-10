@@ -57,7 +57,7 @@ source "vmware-iso" "outsystems-image" {
   communicator     = "winrm"
   disk_size        = var.disk_size
   disk_type_id     = "0"
-  floppy_files     = ["${var.script_directory}/bios/core/autounattend.xml"]
+  floppy_files     = ["${var.script_directory}/setup/autounattend.xml"]
   guest_os_type    = "windows2019srv-64"
   headless         = false
   iso_checksum     = var.iso_checksum
