@@ -180,7 +180,7 @@
                 <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
                 <NetworkLocation>Home</NetworkLocation>
-                <ProtectYourPC>3</ProtectYourPC>
+                <ProtectYourPC>1</ProtectYourPC>
             </OOBE>
             <UserAccounts>
                 <AdministratorPassword>

@@ -34,15 +34,6 @@ variable "vm_name" {
   default = "outsystems-base-image"
 }
 
-variable "vcenter_username" {
-  type    = string
-  default = "administrator@vspher.local"
-}
-
-variable "winrm_password" {
-  type    = string
-}
-
 variable "winrm_password" {
   type    = string
   default = "packer"
@@ -66,9 +57,9 @@ source "vmware-iso" "outsystems-image" {
   communicator     = "winrm"
   disk_size        = var.disk_size
   disk_type_id     = "0"
-  floppy_files     = ["${var.script_directory}/setup/autounattend.xml"]
+  floppy_files     = ["${var.script_directory}/bios/core/autounattend.xml"]
   guest_os_type    = "windows2019srv-64"
-  headless         = true
+  headless         = false
   iso_checksum     = var.iso_checksum
   iso_url          = var.iso_url
   output_directory = var.output_directory
@@ -82,16 +73,12 @@ source "vmware-iso" "outsystems-image" {
     "scsi0.virtualDev"  = "lsisas1068"
     "virtualHW.version" = "14"
   }
-
   winrm_insecure   = true
   winrm_password   = var.winrm_password
   winrm_timeout    = "4h"
   winrm_use_ssl    = true
   winrm_username   = var.winrm_username
 
-
-  username         = var.vcenter_username 
-  vcenter_server   = var.vcenter_server
 }
 
 build {
