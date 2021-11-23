@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-packer build --debug --var-file=${SECRETS_DIR}/outsystems-image.pkrvars.hcl ${PROJECT_DIR}/packer/outsystems-image.pkr.hcl
+packer build --var-file=${SECRETS_DIR}/outsystems-image.pkrvars.hcl ${PROJECT_DIR}/packer/outsystems-image.pkr.hcl
 
