@@ -6,22 +6,40 @@ locals {
   }
 }
   
-source "vmware-iso" "outsystems-image" {
+source "vsphere-iso" "outsystems-template" {
   vm_name       = var.vm_name
-  guest_os_type = "windows2019srv-64"
+  guest_os_type = "windows2019srv_64Guest"
+  firmware      = "efi-secure"
 
-  iso_checksum = var.iso_checksum
-  iso_url      = var.iso_url
+  iso_url      = var.image_url
+  iso_checksum = var.image_checksum
 
-  cpus              = var.numvcpus
-  memory            = var.memsize
-  disk_size         = var.disk_size
-  disk_type_id      = "0"
-  disk_adapter_type = "lsisas1068"
+  CPUs                 = var.numvcpus
+  RAM                  = var.memsize
+  disk_controller_type = ["lsilogic-sas"]
+  storage {
+    disk_size             = var.disk_size
+    disk_thin_provisioned = true
+  }
 
+  network_adapters {
+    network      = var.vsphere_network
+    network_card = "vmxnet3"
+  }
+
+  boot_order       = "disk,cdrom"
+  boot_command     = [ "<spacebar>" ] 
   boot_wait        = var.boot_wait
-  floppy_files     = ["${local.directories.setup}/autounattend.xml"]
-  headless         = false
+  floppy_content   = {
+    "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
+      default_password       = var.default_password
+    })
+    "install-vmware-tools.ps1" = file("${local.directories.scripts}/windows-vmtools.ps1")
+  }
+  iso_paths = [ 
+    "[] /vmimages/tools-isoimages/windows.iso"
+  ]
+
   shutdown_command = "shutdown /s /t 5 /f /d p:4:1 /c \"Packer Shutdown\""
   shutdown_timeout = "30m"
 
@@ -32,21 +50,30 @@ source "vmware-iso" "outsystems-image" {
   winrm_use_ssl  = true
   winrm_username = var.winrm_username
 
-  output_directory = local.directories.output
-  format           = "ova"
-  ovftool_options  = [ "--noImageFiles" ]
-  skip_compaction  = false
+  vcenter_server      = var.vsphere_server
+  username            = var.vsphere_username
+  password            = var.vsphere_password
+  datacenter          = var.vsphere_datacenter
+  cluster             = var.vsphere_cluster
+  datastore           = var.vsphere_datastore
+
+  content_library_destination {
+    name    = var.vm_name
+    library = var.vsphere_content_library
+    ovf     = true
+    destroy = true
+  }
 }
 
 build {
-  sources = ["source.vmware-iso.outsystems-image"]
+  sources = ["source.vsphere-iso.outsystems-template"]
 
   provisioner "powershell" {
     script = "${local.directories.scripts}/outsystems-test.ps1"
   }
 
   provisioner "powershell" {
-    script = "${local.directories.scripts}/vmware-tools.ps1"
+    script = "${local.directories.scripts}/enable-remote-access.ps1"
   }
 
   provisioner "powershell" {
@@ -71,10 +98,6 @@ build {
 
   provisioner "powershell" {
    script = "${local.directories.scripts}/install-outsystems-server.ps1"
-  }
-
-  provisioner "powershell" {
-    script = "${local.directories.scripts}/enable-remote-access.ps1"
   }
 
   provisioner "powershell" {
