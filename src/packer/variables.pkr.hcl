@@ -31,6 +31,7 @@ variable "disk_size" {
   type = string
 }
 
+<<<<<<< HEAD
 variable "vsphere_username" {
   type    = string
   default = "administrator@vsphere.local"
@@ -67,6 +68,11 @@ variable "vsphere_network" {
 variable "boot_wait" {
   type    = string
   default = "2s"
+=======
+variable "boot_wait" {
+  type    = string
+  default = "5s"
+>>>>>>> f828e5f8f52cfc0dfea531ca9f109a98a885f5f3
 }
 
 variable "winrm_password" {
