@@ -34,7 +34,8 @@ source "vsphere-iso" "outsystems-template" {
     "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
       default_password       = var.default_password
     })
-    "install-vmware-tools.ps1" = file("${local.directories.scripts}/windows-vmtools.ps1")
+    "install-vmware-tools.ps1" = file("${local.directories.scripts}/wwindowsindows-vmtools.ps1")
+    "enable-remote-access.ps1" = file("${local.directories.scripts}/enable-remote-access.ps1")
   }
   iso_paths = [ 
     "[] /vmimages/tools-isoimages/windows.iso"
@@ -70,10 +71,6 @@ build {
 
   provisioner "powershell" {
     script = "${local.directories.scripts}/outsystems-test.ps1"
-  }
-
-  provisioner "powershell" {
-    script = "${local.directories.scripts}/enable-remote-access.ps1"
   }
 
   provisioner "powershell" {

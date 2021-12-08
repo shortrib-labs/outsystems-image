@@ -183,41 +183,11 @@
                <Description>Install VMware Tools</Description>
             </SynchronousCommand>
             <SynchronousCommand wcm:action="add">
-               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command New-SelfSignedCertificate -CertstoreLocation Cert:\LocalMachine\My -DnsName "WinRMCertificate"</CommandLine>
-               <Description>Certificate for WinRM</Description>
+               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -File a:\enable-remote-access.ps1</CommandLine>
                <Order>4</Order>
-               <RequiresUserInput>true</RequiresUserInput>
+               <Description>Install VMware Tools</Description>
             </SynchronousCommand>
-            <SynchronousCommand wcm:action="add">
-               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command Enable-PSRemoting -SkipNetworkProfileCheck -Force</CommandLine>
-               <Description>Enable WinRM</Description>
-               <Order>5</Order>
-               <RequiresUserInput>true</RequiresUserInput>
-            </SynchronousCommand>
-            <SynchronousCommand wcm:action="add">
-               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command ($cert = gci Cert:\LocalMachine\My\) -and (New-Item -Path WSMan:\LocalHost\Listener -Transport HTTPS -Address * -CertificateThumbPrint $cert.Thumbprint –Force)</CommandLine>
-               <Description>Add HTTPS WinRM listener with previously generated certificate</Description>
-               <Order>6</Order>
-               <RequiresUserInput>true</RequiresUserInput>
-            </SynchronousCommand>
-            <SynchronousCommand wcm:action="add">
-               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command New-NetFirewallRule -DisplayName 'Windows Remote Management (HTTPS-In)' -Name 'Windows Remote Management (HTTPS-In)' -Profile Any -LocalPort 5986 -Protocol TCP</CommandLine>
-               <Description>Add firewall exception to TCP port 5986 for WinRM over HTTPS</Description>
-               <Order>7</Order>
-               <RequiresUserInput>true</RequiresUserInput>
-            </SynchronousCommand>
-            <SynchronousCommand wcm:action="add">
-               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command Set-Item WSMan:\localhost\Service\Auth\Basic -Value $true</CommandLine>
-               <Description>Enable Basic authentication</Description>
-               <Order>8</Order>
-               <RequiresUserInput>true</RequiresUserInput>
-            </SynchronousCommand>
-            <SynchronousCommand wcm:action="add">
-               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command Stop-Service WinRM</CommandLine>
-               <Description>Stop the WinRM service to allow the dism process to finish before packer executes scripts</Description>
-               <Order>9</Order>
-               <RequiresUserInput>true</RequiresUserInput>
-            </SynchronousCommand>
+           </SynchronousCommand>
          </FirstLogonCommands>
       </component>
    </settings>
