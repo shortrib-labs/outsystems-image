@@ -67,10 +67,6 @@ variable "vsphere_network" {
 variable "boot_wait" {
   type    = string
   default = "2s"
-
-variable "winrm_password" {
-  type    = string
-  default = "packer"
 }
 
 variable "winrm_username" {

@@ -34,7 +34,7 @@ source "vsphere-iso" "outsystems-template" {
     "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
       default_password       = var.default_password
     })
-    "install-vmware-tools.ps1" = file("${local.directories.scripts}/wwindowsindows-vmtools.ps1")
+    "install-vmware-tools.ps1" = file("${local.directories.scripts}/windows-vmtools.ps1")
     "enable-remote-access.ps1" = file("${local.directories.scripts}/enable-remote-access.ps1")
   }
   iso_paths = [ 
@@ -46,10 +46,10 @@ source "vsphere-iso" "outsystems-template" {
 
   communicator   = "winrm"
   winrm_insecure = true
-  winrm_password = var.winrm_password
   winrm_timeout  = "4h"
   winrm_use_ssl  = true
   winrm_username = var.winrm_username
+  winrm_password = var.default_password
 
   vcenter_server      = var.vsphere_server
   username            = var.vsphere_username
