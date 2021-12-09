@@ -1,7 +1,7 @@
 # Enable WinRM
-New-SelfSignedCertificate -CertstoreLocation Cert:\LocalMachine\My -DnsName "WinRMCertificate"
+$cert = New-SelfSignedCertificate -CertstoreLocation Cert:\LocalMachine\My -DnsName "WinRMCertificate"
 Enable-PSRemoting -SkipNetworkProfileCheck -Force
-($cert = gci Cert:\LocalMachine\My\) -and (New-Item -Path WSMan:\LocalHost\Listener -Transport HTTPS -Address * -CertificateThumbPrint $cert.Thumbprint –Force)
+New-Item -Path WSMan:\LocalHost\Listener -Transport HTTPS -Address * -CertificateThumbPrint $cert.Thumbprint -Force
 
 # Confirm the Firewall rule for WinRM is configured. It should be created automatically by setup. Run the following to verify
 if (!(Get-NetFirewallRule -Name "WinRM-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
