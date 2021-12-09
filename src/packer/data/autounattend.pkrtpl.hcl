@@ -187,7 +187,6 @@
                <Order>4</Order>
                <Description>Install VMware Tools</Description>
             </SynchronousCommand>
-           </SynchronousCommand>
          </FirstLogonCommands>
       </component>
    </settings>
