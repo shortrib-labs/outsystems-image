@@ -185,7 +185,12 @@
             <SynchronousCommand wcm:action="add">
                <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -File a:\enable-remote-access.ps1</CommandLine>
                <Order>4</Order>
-               <Description>Install VMware Tools</Description>
+               <Description>Enable remote access with WinRM, SSH, and RDP</Description>
+            </SynchronousCommand>
+            <SynchronousCommand wcm:action="add">
+               <CommandLine>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -Command dism /online /quiet /set-edition:ServerStandard /productkey:N69G4-B89J2-4G8F4-WWYCC-J464C /accepteula</CommandLine>
+               <Order>5</Order>
+               <Description>Switch from EVAL to VL</Description>
             </SynchronousCommand>
          </FirstLogonCommands>
       </component>
