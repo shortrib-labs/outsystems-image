@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-packer build -only=vmware-iso.outsystems-image ${PROJECT_DIR}/packer/outsystems-image.pkr.hcl
+packer build -only=vsphere-iso.outsystems-template --var-file ${SECRETS_DIR}/outsystems-template.pkrvars.hcl ${SOURCE_DIR}/packer
+

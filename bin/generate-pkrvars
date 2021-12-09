@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+cat <<PKRVARS >${SECRETS_DIR}/outsystems-template.pkrvars.hcl
+vm_name          = "$(yq e .template_name ${PARAMS_YAML})"
+default_password = "$(yq e .default_password ${PARAMS_YAML})"
+project_root     = "${PROJECT_DIR}"
+
+image_url      = "$(yq e .windows.image ${PARAMS_YAML})"
+image_checksum = "$(yq e .windows.checksum ${PARAMS_YAML})"
+
+numvcpus    = "$(yq e .server.cpus ${PARAMS_YAML})"
+memsize     = "$(yq e .server.memory ${PARAMS_YAML})"
+disk_size   = "$(yq e .server.disk ${PARAMS_YAML})"
+
+vsphere_server   = "$(yq e .vsphere.server ${PARAMS_YAML})"
+vsphere_username = "$(yq e .vsphere.username ${PARAMS_YAML})@shortrib.local"
+vsphere_password = "$(yq e .vsphere.password ${PARAMS_YAML})"
+
+vsphere_datacenter      = "$(yq e .vsphere.datacenter ${PARAMS_YAML})"
+vsphere_cluster         = "$(yq e .vsphere.cluster ${PARAMS_YAML})"
+vsphere_network         = "$(yq e .vsphere.network ${PARAMS_YAML})"
+vsphere_datastore       = "$(yq e .vsphere.datastore ${PARAMS_YAML})"
+vsphere_content_library = "$(yq e .vsphere.content_library ${PARAMS_YAML})"
+PKRVARS
