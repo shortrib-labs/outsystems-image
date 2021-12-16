@@ -60,10 +60,6 @@ variable "vsphere_datastore" {
   type = string
 }
 
-variable "vsphere_content_library" {
-  type = string
-}
-
 variable "vsphere_network" {
   type = string
 }

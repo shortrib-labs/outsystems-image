@@ -21,5 +21,4 @@ vsphere_datacenter      = "$(yq e .vsphere.datacenter ${PARAMS_YAML})"
 vsphere_cluster         = "$(yq e .vsphere.cluster ${PARAMS_YAML})"
 vsphere_network         = "$(yq e .vsphere.network ${PARAMS_YAML})"
 vsphere_datastore       = "$(yq e .vsphere.datastore ${PARAMS_YAML})"
-vsphere_content_library = "$(yq e .vsphere.content_library ${PARAMS_YAML})"
 PKRVARS
