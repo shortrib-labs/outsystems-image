@@ -59,7 +59,7 @@ source "vsphere-iso" "outsystems-template" {
 
   export {
     name  = var.vm_name
-    image = false
+    images = false
     force = true
 
     output_directory = var.output_directory
