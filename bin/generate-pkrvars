@@ -4,6 +4,7 @@ cat <<PKRVARS >${SECRETS_DIR}/outsystems-template.pkrvars.hcl
 vm_name          = "$(yq e .template_name ${PARAMS_YAML})"
 default_password = "$(yq e .default_password ${PARAMS_YAML})"
 project_root     = "${PROJECT_DIR}"
+output_directory = "${WORK_DIR}/$(yq e .template_name ${PARAMS_YAML})"
 
 image_url      = "$(yq e .windows.image ${PARAMS_YAML})"
 image_checksum = "$(yq e .windows.checksum ${PARAMS_YAML})"

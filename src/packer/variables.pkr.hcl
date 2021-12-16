@@ -19,6 +19,10 @@ variable "image_checksum" {
   type = string
 }
 
+variable "output_directory" {
+  type = string
+}
+
 variable "memsize" {
   type = string
 }
