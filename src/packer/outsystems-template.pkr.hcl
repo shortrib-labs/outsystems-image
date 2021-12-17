@@ -100,8 +100,4 @@ build {
   provisioner "powershell" {
     script = "${local.directories.scripts}/cleanup.ps1"
   }
-
-  post-processor "shell-local" {
-    inline = ["govc vm.destroy ${var.vm_name}"]
-  }
 }
