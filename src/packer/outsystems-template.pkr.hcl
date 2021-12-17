@@ -102,6 +102,6 @@ build {
   }
 
   post-processor "shell-local" {
-    inline = ["govc destroy ${var.vm_name}"]
+    inline = ["govc vm.destroy ${var.vm_name}"]
   }
 }
