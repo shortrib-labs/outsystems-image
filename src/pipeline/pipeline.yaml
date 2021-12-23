@@ -46,6 +46,23 @@ resources:
 #       prefix: ((gcs.prefix))
 #       credentials: ((google-credentials))
 
+packer-params: &packer-params
+  OVF_NAME: ((template.vm_name))
+  PKR_VAR_vm_name: ((template.vm_name))
+  PKR_VAR_default_password: ((default_password))
+  PKR_VAR_image_url: ((image.url))
+  PKR_VAR_image_checksum: ((image.checksum))
+  PKR_VAR_numvcpus: ((template.numvcpus))
+  PKR_VAR_memsize: ((template.memsize))
+  PKR_VAR_disk_size: ((template.disk_size))
+  PKR_VAR_vsphere_username: ((vsphere.username)) 
+  PKR_VAR_vsphere_password: ((vsphere.password)) 
+  PKR_VAR_vsphere_datacenter: ((vsphere.datacenter)) 
+  PKR_VAR_vsphere_cluster: ((vsphere.cluster)) 
+  PKR_VAR_vsphere_server: ((vsphere.server)) 
+  PKR_VAR_vsphere_network: ((vsphere.network)) 
+  PKR_VAR_vsphere_datastore: ((vsphere.datastore)) 
+
 jobs:
 - name: validate-template
   plan:
@@ -60,22 +77,7 @@ jobs:
           repository: registry.shortrib.dev/toolkit/toolkit
       inputs:
       - name: source
-      params:
-        OVF_NAME: ((template.vm_name))
-        PKR_VAR_vm_name: ((template.vm_name))
-        PKR_VAR_default_password: ((default_password))
-        PKR_VAR_image_url: ((image.url))
-        PKR_VAR_image_checksum: ((image.checksum))
-        PKR_VAR_numvcpus: ((template.numvcpus))
-        PKR_VAR_memsize: ((template.memsize))
-        PKR_VAR_disk_size: ((template.disk_size))
-        PKR_VAR_vsphere_username: ((vsphere.username)) 
-        PKR_VAR_vsphere_password: ((vsphere.password)) 
-        PKR_VAR_vsphere_datacenter: ((vsphere.datacenter)) 
-        PKR_VAR_vsphere_cluster: ((vsphere.cluster)) 
-        PKR_VAR_vsphere_server: ((vsphere.server)) 
-        PKR_VAR_vsphere_network: ((vsphere.network)) 
-        PKR_VAR_vsphere_datastore: ((vsphere.datastore)) 
+      params: *packer-params
       run:
         path: bash
         dir: source
@@ -102,22 +104,7 @@ jobs:
       - name: source
       outputs:
       - name: template
-      params:
-        OVF_NAME: ((template.vm_name))
-        PKR_VAR_vm_name: ((template.vm_name))
-        PKR_VAR_default_password: ((default_password))
-        PKR_VAR_image_url: ((image.url))
-        PKR_VAR_image_checksum: ((image.checksum))
-        PKR_VAR_numvcpus: ((template.numvcpus))
-        PKR_VAR_memsize: ((template.memsize))
-        PKR_VAR_disk_size: ((template.disk_size))
-        PKR_VAR_vsphere_username: ((vsphere.username)) 
-        PKR_VAR_vsphere_password: ((vsphere.password)) 
-        PKR_VAR_vsphere_datacenter: ((vsphere.datacenter)) 
-        PKR_VAR_vsphere_cluster: ((vsphere.cluster)) 
-        PKR_VAR_vsphere_server: ((vsphere.server)) 
-        PKR_VAR_vsphere_network: ((vsphere.network)) 
-        PKR_VAR_vsphere_datastore: ((vsphere.datastore)) 
+      params: *packer-params
       run:
         path: bash
         dir: source
