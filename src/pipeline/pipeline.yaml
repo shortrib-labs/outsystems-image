@@ -12,13 +12,13 @@ resources:
 
 - name: ova
   type: s3
-  icon: database
+  icon: database 
   source:
     endpoint: ((minio.fqdn))
     access_key_id: ((minio.access_key_id))
     secret_access_key: ((minio.secret_access_key))
     bucket: ((bucket))
-    regexp: ((template.vm_name))(.*).ova
+    regexp: ((template.vm_name))-(.*).ova
    
 # - name: content-library
 #   type: terraform
@@ -133,7 +133,6 @@ jobs:
         - -c
         - | 
           govc vm.destroy ${WORKING_VM}
-
   - task: convert-to-ova
     config:
       platform: linux
@@ -150,14 +149,13 @@ jobs:
         OVF_NAME: ((template.vm_name))
       run:
         path: bash
-        dir: source
         args:
         - -c
         - |
           root=${PWD}
           ref=$(cat source/.git/short_ref)
           cd template/${OVF_NAME} 
-          tar -cf ${root}/ova/${OVF_NAME}-${ref}.ova *
+          tar -cf ${root}/ova/${OVF_NAME}-${version}.ova *
   - put: ova
     params:
       file: ((template.vm_name))-*.ova
