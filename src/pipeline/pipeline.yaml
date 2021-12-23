@@ -20,6 +20,16 @@ resources:
     bucket: ((bucket))
     regexp: ((template.vm_name))-(.*).ova
    
+- name: version
+  type: semver
+  icon: counter
+  source:
+    endpoint: ((minio.fqdn))
+    access_key_id: ((minio.access_key_id))
+    secret_access_key: ((minio.secret_access_key))
+    bucket: ((bucket))
+    key: version 
+ 
 # - name: content-library
 #   type: terraform
 #   icon: terraform
@@ -79,6 +89,8 @@ jobs:
     trigger: true
     passed:
     - validate-template
+  - get: version
+    params: {bump: minor}
   - task: create-image
     config:
       platform: linux
@@ -143,6 +155,7 @@ jobs:
       inputs:
       - name: template
       - name: source
+      - name: version
       outputs:
       - name: ova
       params:
@@ -153,12 +166,15 @@ jobs:
         - -c
         - |
           root=${PWD}
-          ref=$(cat source/.git/short_ref)
+          version=$(cat version/version)
           cd template/${OVF_NAME} 
           tar -cf ${root}/ova/${OVF_NAME}-${version}.ova *
   - put: ova
     params:
-      file: ((template.vm_name))-*.ova
+      file: ova/((template.vm_name))-*.ova
+  - put: version
+    params: 
+      file: version/version
 
 resource_types:
 - name: terraform
