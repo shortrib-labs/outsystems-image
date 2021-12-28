@@ -2,12 +2,6 @@
 set -e
 
 put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \
-  --var google-credentials "$(cat ${SECRETS_DIR}/$(basename ${PROJECT_DIR}.json))"
-
-put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \
-  --var gcs region="us-west-1" bucket="$(basename ${PROJECT_DIR})" prefix="terraform/state"
-  
-put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \
   --var default_password "$(yq e .default_password ${PARAMS_YAML})"
 
 put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \

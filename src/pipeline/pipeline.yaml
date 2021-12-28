@@ -28,23 +28,7 @@ resources:
     access_key_id: ((minio.access_key_id))
     secret_access_key: ((minio.secret_access_key))
     bucket: ((bucket))
-    key: version 
- 
-# - name: content-library
-#   type: terraform
-#   icon: terraform
-#   source:
-#     env_name: default
-#     varjackes:
-#       project: shortrib
-#       region: ((gcs.region))
-#     env:
-#       GOOGLE_CREDENTIALS: ((google-credentials))
-#     backend_type: gcs
-#     backend_config:
-#       bucket: ((gcs.bucket))
-#       prefix: ((gcs.prefix))
-#       credentials: ((google-credentials))
+    key: ((template.vm_name)).version
 
 packer-params: &packer-params
   OVF_NAME: ((template.vm_name))
@@ -160,7 +144,7 @@ jobs:
     params:
       file: ova/((template.vm_name))-*.ova
   - put: version
-    params: 
+    params:
       file: version/version
 
 resource_types:
