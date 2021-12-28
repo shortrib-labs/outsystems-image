@@ -1,0 +1,155 @@
+---
+resources:
+- name: source
+  type: git
+  icon: github
+  source:
+    uri: ((source.repository))
+    branch: ((source.branch))
+    paths:
+    - "src/packer/**"
+    - "src/powershell/**"
+
+- name: ova
+  type: s3
+  icon: database 
+  source:
+    endpoint: ((minio.fqdn))
+    access_key_id: ((minio.access_key_id))
+    secret_access_key: ((minio.secret_access_key))
+    bucket: ((bucket))
+    regexp: ((template.vm_name))-(.*).ova
+   
+- name: version
+  type: semver
+  icon: counter
+  source:
+    endpoint: ((minio.fqdn))
+    access_key_id: ((minio.access_key_id))
+    secret_access_key: ((minio.secret_access_key))
+    bucket: ((bucket))
+    key: ((template.vm_name)).version
+
+packer-params: &packer-params
+  OVF_NAME: ((template.vm_name))
+  PKR_VAR_vm_name: ((template.vm_name))
+  PKR_VAR_default_password: ((default_password))
+  PKR_VAR_image_url: ((image.url))
+  PKR_VAR_image_checksum: ((image.checksum))
+  PKR_VAR_numvcpus: ((template.numvcpus))
+  PKR_VAR_memsize: ((template.memsize))
+  PKR_VAR_disk_size: ((template.disk_size))
+  PKR_VAR_vsphere_username: ((vsphere.username)) 
+  PKR_VAR_vsphere_password: ((vsphere.password)) 
+  PKR_VAR_vsphere_datacenter: ((vsphere.datacenter)) 
+  PKR_VAR_vsphere_cluster: ((vsphere.cluster)) 
+  PKR_VAR_vsphere_server: ((vsphere.server)) 
+  PKR_VAR_vsphere_network: ((vsphere.network)) 
+  PKR_VAR_vsphere_datastore: ((vsphere.datastore)) 
+
+jobs:
+- name: validate-template
+  plan:
+  - get: source
+    trigger: true
+  - task: validate
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: registry.shortrib.dev/toolkit/toolkit
+      inputs:
+      - name: source
+      params: *packer-params
+      run:
+        path: bash
+        dir: source
+        args:
+        - -c
+        - |
+          packer validate --var project_root=${PWD} --var output_directory=${PWD}/../template/${OVF_NAME} src/packer 
+- name: create-image
+  plan:
+  - get: source
+    trigger: true
+    passed:
+    - validate-template
+  - get: version
+    params: {bump: minor}
+  - task: create-image
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: registry.shortrib.dev/toolkit/toolkit
+      inputs:
+      - name: source
+      outputs:
+      - name: template
+      params: *packer-params
+      run:
+        path: bash
+        dir: source
+        args:
+        - -c
+        - |
+          packer build --var project_root=${PWD} --var output_directory=${PWD}/../template/${OVF_NAME} src/packer 
+  - task: delete-vm
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: registry.shortrib.dev/toolkit/toolkit
+      inputs:
+      - name: source
+      params:
+        WORKING_VM: ((template.vm_name))
+        GOVC_URL: https://((vsphere.server)) 
+        GOVC_USERNAME: ((vsphere.username)) 
+        GOVC_PASSWORD: ((vsphere.password)) 
+      run:
+        path: bash
+        args:
+        - -c
+        - | 
+          govc vm.destroy ${WORKING_VM}
+  - task: convert-to-ova
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: registry.shortrib.dev/toolkit/toolkit
+      inputs:
+      - name: template
+      - name: source
+      - name: version
+      outputs:
+      - name: ova
+      params:
+        OVF_NAME: ((template.vm_name))
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          root=${PWD}
+          version=$(cat version/version)
+          cd template/${OVF_NAME} 
+          tar -cf ${root}/ova/${OVF_NAME}-${version}.ova *
+  - put: ova
+    params:
+      file: ova/((template.vm_name))-*.ova
+  - put: version
+    params:
+      file: version/version
+
+resource_types:
+- name: terraform
+  type: registry-image
+  source:
+    repository: ljfranklin/terraform-resource
+    tag: latest

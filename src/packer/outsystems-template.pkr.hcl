@@ -2,7 +2,6 @@ locals {
   directories = {
     "scripts"  = "${var.project_root}/src/powershell"
     "setup"  = "${var.project_root}/src/xml"
-    "output"   = "${var.project_root}/work/${var.vm_name}"
   }
 }
   
@@ -58,11 +57,12 @@ source "vsphere-iso" "outsystems-template" {
   cluster             = var.vsphere_cluster
   datastore           = var.vsphere_datastore
 
-  content_library_destination {
-    name    = var.vm_name
-    library = var.vsphere_content_library
-    ovf     = true
-    destroy = true
+  export {
+    name  = var.vm_name
+    images = false
+    force = true
+
+    output_directory = var.output_directory
   }
 }
 
@@ -100,5 +100,4 @@ build {
   provisioner "powershell" {
     script = "${local.directories.scripts}/cleanup.ps1"
   }
-
 }

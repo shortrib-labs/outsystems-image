@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \
+  --var default_password "$(yq e .default_password ${PARAMS_YAML})"
+
+put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \
+  --var bucket "$(yq e .bucket ${PARAMS_YAML})"
+
+put-secret --team platform-team --pipeline "$(basename ${PROJECT_DIR})" \
+  --var vsphere server="$(yq e .vsphere.server ${PARAMS_YAML})" username="$(yq e .vsphere.username ${PARAMS_YAML})@shortrib.local" \
+                password="$(yq e .vsphere.password ${PARAMS_YAML})" datacenter="$(yq e .vsphere.datacenter ${PARAMS_YAML})" \
+                cluster="$(yq e .vsphere.cluster ${PARAMS_YAML})" network="$(yq e .vsphere.network ${PARAMS_YAML})" \
+                datastore="$(yq e .vsphere.datastore ${PARAMS_YAML})" 

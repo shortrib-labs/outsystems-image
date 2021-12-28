@@ -19,6 +19,10 @@ variable "image_checksum" {
   type = string
 }
 
+variable "output_directory" {
+  type = string
+}
+
 variable "memsize" {
   type = string
 }
@@ -53,10 +57,6 @@ variable "vsphere_cluster" {
 }
 
 variable "vsphere_datastore" {
-  type = string
-}
-
-variable "vsphere_content_library" {
   type = string
 }
 
