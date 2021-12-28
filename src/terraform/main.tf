@@ -1,15 +1,9 @@
-resource "null_resource" "test" {
-
+data "vsphere_content_library" "library" {
+  name = var.vsphere_content_library
 }
 
-resource "null_resource" "validate" {
-
-}
-
-output "test" {
-  value = null_resource.test.id
-}
-
-output "validate" {
-  value = null_resource.validate.id
+resource "vsphere_content_library_item" "template" {
+  name        = var.template_name
+  description = "Windows template with OS 11 instsalled. Use for OutSystems platform, front end, and LifeTime servers"
+  library_id  = data.vsphere_content_library.library.id
 }
