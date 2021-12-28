@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+BRANCH=${1:-main}
+
+ytt --ignore-unknown-comments -f ${SOURCE_DIR}/pipeline/params-template.yaml -f ${PARAMS_YAML} \
+    --data-value repository=$(git remote get-url origin | sed -E 's#git@([^[:space:]]*):(.*)#https://\1/\2#') --data-value branch="${BRANCH}" \
+  > ${WORK_DIR}/params.yaml

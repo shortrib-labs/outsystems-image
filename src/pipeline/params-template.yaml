@@ -1,0 +1,16 @@
+#@ load("@ytt:data", "data")
+---
+source: 
+  repository: #@ data.values.repository
+  branch: #@ data.values.branch
+
+template: 
+  vm_name: #@ data.values.template_name
+  numvcpus: #@ data.values.server.cpus
+  memsize: #@ data.values.server.memory
+  disk_size: #@ data.values.server.disk
+
+image: 
+  url: #@ data.values.windows.image 
+  checksum: #@ data.values.windows.checksum
+
