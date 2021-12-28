@@ -15,18 +15,6 @@ variable "vsphere_server" {
   type = string
 }
 
-variable "vsphere_datacenter" {
-  type = string
-}
-
-variable "vsphere_cluster" {
-  type = string
-}
-
-variable "vsphere_datastore" {
-  type = string
-}
-
 variable "vsphere_content_library" {
   type = string
 }
