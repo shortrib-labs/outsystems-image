@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+TEAM=$(yq e .concourse.team ${PARAMS_YAML})
+PIPELINE=$(basename $(pwd)) 
+
+fly --target ${TEAM} set-pipeline --pipeline ${PIPELINE} --config ${SOURCE_DIR}/pipeline/pipeline.yaml --load-vars-from ${WORK_DIR}/params.yaml
+fly --target platform-team unpause-pipeline --pipeline ${PIPELINE}
