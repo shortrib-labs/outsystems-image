@@ -98,6 +98,10 @@ build {
   }
 
   provisioner "powershell" {
+   script = "${local.directories.scripts}/configure-winrm-for-ansible.ps1"
+  }
+
+  provisioner "powershell" {
     script = "${local.directories.scripts}/cleanup.ps1"
   }
 }
